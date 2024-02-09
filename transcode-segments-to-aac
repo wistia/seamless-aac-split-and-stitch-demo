@@ -18,23 +18,23 @@ ffmpeg -hide_banner -y -ss 0us -t 2089800us -i sine-wave-6-seconds.wav -c:a libf
 # adds the 2 for silence even if we don't ask for it.)
 
 # recall the target end of the last audio segment is 1996920. that's the target
-# start of this segment. but we'll ask for four frames before it, knowing
+# start of this segment. but we'll ask for eight frames before it, knowing
 # they'll be cut out later.
-# 1996920 - 23220 * 4 = 1904040
+# 1996920 - 23220 * 8 = 1811160
 #
 # the closest aligned time to 4 seconds is 4000000 / 23220 = 172.26528854
 # 172 * 23220 = 3993840us
-# proper duration to align at about 4 seconds = 3993840 - 1904040 = 2089800
-# add 4 frames at the end, 2089800 + 23220 * 4 = 2182680
-ffmpeg -hide_banner -y -ss 1904040us -t 2182680us -i sine-wave-6-seconds.wav -c:a libfdk_aac -ar 44100 -f adts seg2.aac
+# proper duration to align at about 4 seconds = 3993840 - 1811160 = 2182680
+# add 10 frames at the end, 2182680 + 23220 * 10 = 2414880
+ffmpeg -hide_banner -y -ss 1811160us -t 2414880us -i sine-wave-6-seconds.wav -c:a libfdk_aac -ar 44100 -f adts seg2.aac
 
 # last segment uses the same logic as the second. only difference is in
 # audio-concat.txt, we don't subtract a single audio frame from the outpoint.
 #
 # target start = 3993840
-# 4 frames before the beginning: 3993840 - 23220 * 4 = 3900960
+# 8 frames before the beginning: 3993840 - 23220 * 8 = 3808080
 # closest aligned time to 6 seconds is 6000000 / 23220 = 258.39793282
 # 258 * 23220 = 5990760
-# proper duration to align at about 6 seconds = 5990760 - 3900960 = 2089800
-# add 4 frames at the end, 2089800 + 23220 * 4 = 2182680
-ffmpeg -hide_banner -y -ss 3900960us -t 2182680us -i sine-wave-6-seconds.wav -c:a libfdk_aac -ar 44100 -f adts seg3.aac
+# proper duration to align at about 6 seconds = 5990760 - 3808080 = 2182680
+# add 8 frames at the end, 2182680 + 23220 * 8 = 2368440
+ffmpeg -hide_banner -y -ss 3808080us -t 2368440us -i sine-wave-6-seconds.wav -c:a libfdk_aac -ar 44100 -f adts seg3.aac
