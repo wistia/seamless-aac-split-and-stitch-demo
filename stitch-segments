@@ -1,0 +1,3 @@
+#!/bin/bash
+
+ffmpeg -hide_banner -y -f concat -i audio-segments.txt -c:a copy stitched.mp4

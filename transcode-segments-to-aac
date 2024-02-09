@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# AAC frame duration at 44.1Khz = 1024/44100 = 0.02321995 seconds, rounded to 23220us
+
+# find closest aligned frame to 2 seconds. 2000000 / 23220 = 86.13264427. So 86 frames.
+# 86 * 23220 = 1996920
+# ffmpeg/libfdk_aac clamps the output at the end of a file to avoid a pop. we
+# don't want the clamping, so we encode a little extra at the end (which will
+# be clamped) that we'll chop out later. 4 extra frames
+# 1996920 + 4 * 23220 = 2089800
+
+ffmpeg -hide_banner -y -ss 0us -t 2089800us -i sine-wave-6-seconds.wav -c:a libfdk_aac -ar 44100 -f adts seg1.aac
+
+# ffmpeg adds 2 frames of silence at the start of file. it also unclamps the
+# sound over several frames to avoid a pop. so on all but the first file. we
+# are going to want to get an extra 4 audio frames at the start which we'll
+# cut out later. (we'll ask for 4 here but cut out 6 later because ffmpeg
+# adds the 2 for silence even if we don't ask for it.)
+
+# recall the target end of the last audio segment is 1996920. that's the target
+# start of this segment. but we'll ask for four frames before it, knowing
+# they'll be cut out later.
+# 1996920 - 23220 * 4 = 1904040
+#
+# the closest aligned time to 4 seconds is 4000000 / 23220 = 172.26528854
+# 172 * 23220 = 3993840us
+# proper duration to align at about 4 seconds = 3993840 - 1904040 = 2089800
+# add 4 frames at the end, 2089800 + 23220 * 4 = 2182680
+ffmpeg -hide_banner -y -ss 1904040us -t 2182680us -i sine-wave-6-seconds.wav -c:a libfdk_aac -ar 44100 -f adts seg2.aac
+
+# last segment uses the same logic as the second. only difference is in
+# audio-concat.txt, we don't subtract a single audio frame from the outpoint.
+#
+# target start = 3993840
+# 4 frames before the beginning: 3993840 - 23220 * 4 = 3900960
+# closest aligned time to 6 seconds is 6000000 / 23220 = 258.39793282
+# 258 * 23220 = 5990760
+# proper duration to align at about 6 seconds = 5990760 - 3900960 = 2089800
+# add 4 frames at the end, 2089800 + 23220 * 4 = 2182680
+ffmpeg -hide_banner -y -ss 3900960us -t 2182680us -i sine-wave-6-seconds.wav -c:a libfdk_aac -ar 44100 -f adts seg3.aac
