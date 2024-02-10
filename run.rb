@@ -1,3 +1,5 @@
+require 'fileutils'
+
 SINE_WAVE_DURATION = 10.to_f
 SINE_FREQUENCY = 1000.to_f
 TARGET_SEGMENT_DURATION = 1.0.to_f
@@ -42,7 +44,7 @@ def generate_command_and_directives_for_segment(index, target_start, target_end)
 
   puts "inpoint: #{inpoint}, outpoint: #{outpoint}"
 
-  command = "ffmpeg -hide_banner -loglevel error -nostats -y -ss #{start_time_with_padding}us -t #{padded_duration}us -i #{SINE_WAVE_FILE_NAME} -c:a libfdk_aac -ar 44100 -f adts seg#{index + 1}.aac"
+  command = "ffmpeg -hide_banner -loglevel error -nostats -y -ss #{start_time_with_padding}us -t #{padded_duration}us -i out/#{SINE_WAVE_FILE_NAME} -c:a libfdk_aac -ar 44100 -f adts out/seg#{index + 1}.aac"
   directives = [
     "file 'seg#{index + 1}.aac'",
     "inpoint #{inpoint}us",
@@ -52,7 +54,10 @@ def generate_command_and_directives_for_segment(index, target_start, target_end)
   [command, directives.join("\n")]
 end
 
-system("ffmpeg -hide_banner -loglevel error -nostats -y -f lavfi -i \"sine=frequency=#{SINE_FREQUENCY}:duration=#{SINE_WAVE_DURATION}\" #{SINE_WAVE_FILE_NAME}")
+FileUtils.rm_rf "out"
+FileUtils.mkdir_p "out"
+
+system("ffmpeg -hide_banner -loglevel error -nostats -y -f lavfi -i \"sine=frequency=#{SINE_FREQUENCY}:duration=#{SINE_WAVE_DURATION}\" out/#{SINE_WAVE_FILE_NAME}")
 
 commands_and_directives = (SINE_WAVE_DURATION / TARGET_SEGMENT_DURATION).ceil.to_i.times.map do |i|
   start_time = (i * TARGET_SEGMENT_DURATION * 1000000).round.to_i
@@ -61,7 +66,7 @@ commands_and_directives = (SINE_WAVE_DURATION / TARGET_SEGMENT_DURATION).ceil.to
 end
 
 all_directives = commands_and_directives.map { |cmd, directives| directives }.join("\n")
-File.write("audio-concat.txt", all_directives)
+File.write("out/audio-concat.txt", all_directives)
 
 puts "---"
 
@@ -72,7 +77,7 @@ end
 
 puts "---"
 
-concat_cmd = "ffmpeg -hide_banner -loglevel error -nostats -y -f concat -i audio-concat.txt -c copy stitched.mp4"
+concat_cmd = "ffmpeg -hide_banner -loglevel error -nostats -y -f concat -i out/audio-concat.txt -c copy out/stitched.mp4"
 puts concat_cmd
 puts all_directives
 system(concat_cmd)

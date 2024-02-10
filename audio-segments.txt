@@ -1,6 +1,0 @@
-file 'seg1.aac'
-inpoint 46440us
-outpoint 2020140us
-file 'seg2.aac'
-inpoint 92880us
-outpoint 2066576us
