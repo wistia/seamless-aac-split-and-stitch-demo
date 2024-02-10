@@ -20,6 +20,11 @@ def generate_command_and_directives_for_segment(index, target_start, target_end)
   puts "real_duration: #{real_duration}"
 
   start_time_with_padding = [start_time - frame_duration * 2, 0].max
+
+  # We add extra padding at the end, too, because ffmpeg tapers the last few frames
+  # to avoid a pop when audio stops. We don't want tapering--we just want the signal.
+  # So by shifting the end, we shift the taper past the content we care about it. We'll
+  # chop off this tapered part using outpoint later.
   end_time_with_padding = end_time + frame_duration * 2
   puts "start_time_with_padding: #{start_time_with_padding}, end_time_with_padding: #{end_time_with_padding}"
 
