@@ -9,7 +9,7 @@ def get_closest_aligned_time(target_time)
   nearest_frame_index_for_target_time * frame_duration
 end
 
-def generate_command_and_directives_for_segment(index, target_start, target_end)
+def generate_command_and_directives_for_segment(index, target_start, target_end, is_last)
   puts "--- segment #{index + 1} ---"
 
   start_time = get_closest_aligned_time(target_start)
@@ -51,7 +51,12 @@ def generate_command_and_directives_for_segment(index, target_start, target_end)
 
   # inpoint is inclusive and outpoint is exclusive. To avoid overlap, we subtract
   # the duration of one frame from the outpoint.
-  outpoint = inpoint + real_duration - frame_duration
+  # we don't have to subtract a frame if this is the last segment.
+  subtract = frame_duration
+  if is_last
+    subtract = 0
+  end
+  outpoint = inpoint + real_duration - subtract
 
   puts "inpoint: #{inpoint}, outpoint: #{outpoint}"
 

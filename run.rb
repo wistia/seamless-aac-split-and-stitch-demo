@@ -3,7 +3,7 @@ require_relative "./calculations"
 
 # Feel free to change these constants for your own testing.
 SINE_WAVE_DURATION = 10.to_f
-SINE_FREQUENCY = 1000.to_f
+SINE_FREQUENCY = 10.to_f
 TARGET_SEGMENT_DURATION = 1.0.to_f
 SINE_WAVE_FILE_NAME = "sine-wave-#{SINE_WAVE_DURATION.to_i}-seconds.wav"
 
@@ -18,7 +18,8 @@ system("ffmpeg -hide_banner -loglevel error -nostats -y -f lavfi -i \"sine=frequ
 commands_and_directives = (SINE_WAVE_DURATION / TARGET_SEGMENT_DURATION).ceil.to_i.times.map do |i|
   start_time = (i * TARGET_SEGMENT_DURATION * 1000000).round.to_i
   end_time = [((i + 1) * TARGET_SEGMENT_DURATION * 1000000).round, SINE_WAVE_DURATION * 1000000].min.to_i
-  generate_command_and_directives_for_segment(i, start_time, end_time)
+  is_last = i == (SINE_WAVE_DURATION / TARGET_SEGMENT_DURATION).ceil.to_i - 1
+  generate_command_and_directives_for_segment(i, start_time, end_time, is_last)
 end
 
 all_directives = commands_and_directives.map { |cmd, directives| directives }.join("\n")
