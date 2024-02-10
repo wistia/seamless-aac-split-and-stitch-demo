@@ -8,7 +8,7 @@ The general rule is that, when choosing your audio segment sizes, they _need_ to
 
 This tech is important because it allows faster and more efficient cloud rendering. It may also be used, for example, to render and mux individual HLS segments (TS files) independently of the full file.
 
-I've add more comments and explanations in the code itself.
+I've added more comments and explanations in the code itself.
 
 ## Requirements
 
