@@ -2,7 +2,5 @@ file 'seg1.aac'
 inpoint 46440us
 outpoint 2020140us
 file 'seg2.aac'
-inpoint 232200us
-outpoint 2205900us
-file 'seg3.aac'
-inpoint 232200us
+inpoint 92880us
+outpoint 2066576us

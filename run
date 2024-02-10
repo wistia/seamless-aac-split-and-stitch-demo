@@ -1,0 +1,5 @@
+#!/bin/bash
+
+./create-sine-wave
+./transcode-segments-to-aac
+./stitch-segments
