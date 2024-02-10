@@ -2,6 +2,8 @@
 
 This repo demonstrates calculations and ffmpeg commands to encode portions of an audio file with the AAC codec and to recombine them without transcoding.
 
+https://github.com/wistia/seamless-aac-split-and-stitch-demo/assets/493992/3a88dfda-f345-4518-9e86-696c14ae4a2b
+
 The general rule is that, when choosing your audio segment sizes, they _need_ to be aligned with AAC frame boundaries. With aligned frame boundaries, we can use the concat demuxer to cut out the silence ffmpeg adds, as well as some extra padding we add to account for AAC's dependency on previous frames.
 
 This tech is important because it allows faster and more efficient cloud rendering. It may also be used, for example, to render and mux individual HLS segments (TS files) independently of the full file.
