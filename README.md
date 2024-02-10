@@ -1,6 +1,6 @@
 # Seamless AAC Split and Stitch Demo
 
-This repo demonstrates calculations and ffmpeg commands to encode portions of an audio file with the AAC codec and to recombine them without transcoding.
+This repo demonstrates calculations and ffmpeg commands to encode portions of an audio file with the AAC codec and to recombine them without transcoding and without any skips or glitches.
 
 https://github.com/wistia/seamless-aac-split-and-stitch-demo/assets/493992/3a88dfda-f345-4518-9e86-696c14ae4a2b
 
