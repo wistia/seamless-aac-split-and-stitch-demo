@@ -1,3 +1,0 @@
-#!/bin/bash
-
-ffmpeg -hide_banner -y -f lavfi -i "sine=frequency=1000:duration=8" sine-wave-8-seconds.wav

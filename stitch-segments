@@ -1,3 +1,0 @@
-#!/bin/bash
-
-ffmpeg -hide_banner -loglevel error -nostats -y -f concat -i audio-concat.txt -c copy stitched.mp4
