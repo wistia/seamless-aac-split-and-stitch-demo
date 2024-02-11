@@ -46,6 +46,29 @@ else
   input_file = "out/#{SINE_WAVE_FILE_NAME}"
 end
 
+f = File.open(input_file)
+first_three_bytes_in_hex = f.read(3).unpack1("H*")
+first_two_bytes_in_hex = first_three_bytes_in_hex[0..3]
+f.close
+
+# Byte signatures taken from https://en.wikipedia.org/wiki/List_of_file_signatures
+looks_like_mp3 = first_three_bytes_in_hex == "494433" ||
+  first_two_bytes_in_hex == "fffb" ||
+  first_two_bytes_in_hex == "fff3" ||
+  first_two_bytes_in_hex == "fff2"
+
+if looks_like_mp3
+  # Something about mp3s make it so they have extra padding between them when
+  # split. Remuxing to mkv fixes it.
+  #
+  # NOTE: There may be other formats that benefit from remuxing to MKV too.
+  puts "Detected mp3 input file. Remuxing to mkv..."
+  remux_cmd = "ffmpeg -hide_banner -loglevel error -nostats -y -i #{input_file} -c copy out/remuxed.mkv"
+  puts remux_cmd
+  system(remux_cmd)
+  input_file = "out/remuxed.mkv"
+end
+
 duration_cmd = "ffprobe -hide_banner -loglevel error -select_streams a:0 -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 #{input_file}"
 puts duration_cmd
 duration = `#{duration_cmd}`.to_f
