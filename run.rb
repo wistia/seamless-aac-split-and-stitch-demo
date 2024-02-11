@@ -46,7 +46,18 @@ else
   input_file = "out/#{SINE_WAVE_FILE_NAME}"
 end
 
-if input_file.end_with?(".mp3")
+f = File.open(input_file)
+first_three_bytes_in_hex = f.read(3).unpack1("H*")
+first_two_bytes_in_hex = first_three_bytes_in_hex[0..3]
+f.close
+
+# Byte signatures taken from https://en.wikipedia.org/wiki/List_of_file_signatures
+looks_like_mp3 = first_three_bytes_in_hex == "494433" ||
+  first_two_bytes_in_hex == "fffb" ||
+  first_two_bytes_in_hex == "fff3" ||
+  first_two_bytes_in_hex == "fff2"
+
+if looks_like_mp3
   # Something about mp3s make it so they have extra padding between them when
   # split. Remuxing to mkv fixes it.
   #
