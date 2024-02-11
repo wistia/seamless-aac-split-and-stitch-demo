@@ -14,11 +14,15 @@ FileUtils.mkdir_p "out"
 
 input_file = nil
 
-if ARGV.count == 1 && ARGV[0] !~ /\A\d+(\.\d+)?\z/
+if ARGV.count == 1 && ARGV[0] !~ /\A-?\d+(\.\d+)?\z/
   input_file = ARGV[0]
   target_segment_duration = DEFAULT_SEGMENT_DURATION
 else
   target_segment_duration = (ARGV[0] || DEFAULT_SEGMENT_DURATION).to_f
+end
+
+if target_segment_duration <= 0
+  raise "Segment duration must be greater than 0"
 end
 
 if ARGV.count == 2
