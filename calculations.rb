@@ -9,7 +9,7 @@ def get_closest_aligned_time(target_time)
   nearest_frame_index_for_target_time * frame_duration
 end
 
-def generate_command_and_directives_for_segment(index, target_start, target_end, is_last)
+def generate_command_and_directives_for_segment(input_file, index, target_start, target_end, is_last)
   puts "--- segment #{index + 1} ---"
 
   start_time = get_closest_aligned_time(target_start)
@@ -60,7 +60,7 @@ def generate_command_and_directives_for_segment(index, target_start, target_end,
 
   puts "inpoint: #{inpoint}, outpoint: #{outpoint}"
 
-  command = "ffmpeg -hide_banner -loglevel error -nostats -y -ss #{start_time_with_padding}us -t #{padded_duration}us -i out/#{SINE_WAVE_FILE_NAME} -c:a libfdk_aac -ar 44100 -f adts out/seg#{index + 1}.aac"
+  command = "ffmpeg -hide_banner -loglevel error -nostats -y -ss #{start_time_with_padding}us -t #{padded_duration}us -i #{input_file} -c:a libfdk_aac -ar 44100 -f adts out/seg#{index + 1}.aac"
   directives = [
     "file 'seg#{index + 1}.aac'",
     "inpoint #{inpoint}us",

@@ -24,9 +24,13 @@ ffmpeg version 6.0 Copyright (c) 2000-2023 the FFmpeg developers
 
 ## Usage
 
-Split and stitch:
+Split and stitch with the defaults:
 
     ruby run.rb
+
+Test with your own input files and different target segment durations:
+
+    ruby run.rb 0.5 <path-or-url>
 
 You can find all artifacts in the "out" directory:
 
