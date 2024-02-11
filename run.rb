@@ -46,6 +46,18 @@ else
   input_file = "out/#{SINE_WAVE_FILE_NAME}"
 end
 
+if input_file.end_with?(".mp3")
+  # Something about mp3s make it so they have extra padding between them when
+  # split. Remuxing to mkv fixes it.
+  #
+  # NOTE: There may be other formats that benefit from remuxing to MKV too.
+  puts "Detected mp3 input file. Remuxing to mkv..."
+  remux_cmd = "ffmpeg -hide_banner -loglevel error -nostats -y -i #{input_file} -c copy out/remuxed.mkv"
+  puts remux_cmd
+  system(remux_cmd)
+  input_file = "out/remuxed.mkv"
+end
+
 duration_cmd = "ffprobe -hide_banner -loglevel error -select_streams a:0 -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 #{input_file}"
 puts duration_cmd
 duration = `#{duration_cmd}`.to_f
