@@ -38,6 +38,8 @@ if input_file&.start_with?(/^https?:\/\//)
   end
   File.write("out/downloaded-file", resp.body)
   input_file = "out/downloaded-file"
+elsif input_file
+  puts "Using local file #{input_file}"
 else
   # generate the sine wave we'll use as input
   system("ffmpeg -hide_banner -loglevel error -nostats -y -f lavfi -i \"sine=frequency=#{SINE_FREQUENCY}:duration=#{SINE_WAVE_DURATION}\" out/#{SINE_WAVE_FILE_NAME}")
