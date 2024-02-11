@@ -46,7 +46,7 @@ else
   input_file = "out/#{SINE_WAVE_FILE_NAME}"
 end
 
-duration_cmd = "ffprobe -hide_banner -loglevel error -select_streams v:0 -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 #{input_file}"
+duration_cmd = "ffprobe -hide_banner -loglevel error -select_streams a:0 -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 #{input_file}"
 puts duration_cmd
 duration = `#{duration_cmd}`.to_f
 puts "Input file duration: #{duration}"
