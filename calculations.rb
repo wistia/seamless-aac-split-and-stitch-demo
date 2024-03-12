@@ -58,13 +58,21 @@ def generate_command_and_directives_for_segment(input_file, index, target_start,
   end
   outpoint = inpoint + real_duration - subtract
 
+  # Things usually appear to work fine without the duration directive, but by
+  # adding it, we make it so ffmpeg doesn't need to "guess" how long each
+  # segment should be based on its sample count. Since we can do the math for
+  # this at higher fidelity than ffmpeg, for very long outputs, it may help
+  # avoid de-sync and make seeking more predictably exact.
+  duration_directive = outpoint - inpoint + frame_duration
+
   puts "inpoint: #{inpoint}, outpoint: #{outpoint}"
 
   command = "ffmpeg -hide_banner -loglevel error -nostats -y -ss #{start_time_with_padding}us -t #{padded_duration}us -i #{input_file} -c:a libfdk_aac -ar 44100 -f adts out/seg#{index + 1}.aac"
   directives = [
     "file 'seg#{index + 1}.aac'",
     "inpoint #{inpoint}us",
-    "outpoint #{outpoint}us"
+    "outpoint #{outpoint}us",
+    "duration #{duration_directive}us"
   ]
 
   [command, directives.join("\n")]
