@@ -19,6 +19,8 @@ def generate_command_and_directives_for_segment(input_file, index, target_start,
   real_duration = end_time - start_time
   puts "real_duration: #{real_duration}"
 
+  # We're subtracting two frames from the start time because ffmpeg allways internally
+  # adds 2 frames of priming to the start of the stream.
   start_time_with_padding = [start_time - frame_duration * 2, 0].max
 
   # We add extra padding at the end, too, because ffmpeg tapers the last few frames
@@ -35,15 +37,21 @@ def generate_command_and_directives_for_segment(input_file, index, target_start,
     # the AAC format is interframe. That is, the encoding of each frame depends
     # on the previous frame. This is also why AAC pads the start with silence.
     # By adding some extra padding ourselves, we ensure that the "real" data we
-    # want will have been encoded as if the correct data preceded it.  (Because
+    # want will have been encoded as if the correct data preceded it. (Because
     # it did!)
-    start_time_with_padding = [start_time_with_padding - frame_duration * 2, 0].max
+    #
+    # Note that, although we always set the extra time at the beginning to 2
+    # frames here, it can actually be any value that's 2 frames or more. For
+    # example, if you were encoding with echo, you might want to pad to account
+    # for the full damping time of an echo.
+    extra_time_at_beginning = frame_duration * 2
+    start_time_with_padding = [start_time_with_padding - extra_time_at_beginning, 0].max
 
     # Although we only asked for two frames of padding, ffmpeg will add an
     # additional 2 frames of silence at the start of the segment. When we slice out
     # our real data with inpoint and outpoint, we'll want remove both the silence
     # and the extra frames we asked for.
-    inpoint = frame_duration * 4
+    inpoint = frame_duration * 2 + extra_time_at_beginning
   end
 
   padded_duration = end_time_with_padding - start_time_with_padding
