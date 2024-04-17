@@ -36,6 +36,12 @@ You can find all artifacts in the "out" directory:
 
     ls out
 
+If you know you're operating on an input file that's 44.1KHz, you can also split up the file without transcoding. Try a command like this to test it out:
+
+    NO_TRANSCODE=1 ruby run.rb 1.0 <your-file-with-an-aac-input-stream>
+
 On a Mac, you may want to examine out/stitched.mp4 with a visualization program. The author uses [Audacity](https://www.audacityteam.org/) for that.
 
     open -a Audacity out/stitched.mp4
+
+NOTE: This repo hardcodes the sample rate as 44.1KHz to simplify the demo code. But this method should work with any sample rate.

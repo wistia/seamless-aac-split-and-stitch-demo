@@ -75,7 +75,19 @@ def generate_command_and_directives_for_segment(input_file, index, target_start,
 
   puts "inpoint: #{inpoint}, outpoint: #{outpoint}"
 
-  command = "ffmpeg -hide_banner -loglevel error -nostats -y -ss #{start_time_with_padding}us -t #{padded_duration}us -i #{input_file} -c:a libfdk_aac -ar 44100 -f adts out/seg#{index + 1}.aac"
+  command =
+    if ENV["NO_TRANSCODE"]
+      # If we know the input file is AAC and we're not changing the sample rate,
+      # we can create the segments without transcoding too. This works because,
+      # if we cut at exactly the AAC frame boundaries, then we can just slice
+      # out portions of the stream. Note, however, that -ss and -t flags are moved after
+      # the input file so they're applied after the input file is read. Without that,
+      # you'll get some funky output.
+      "ffmpeg -hide_banner -loglevel error -nostats -y -i #{input_file} -c:a copy -ss #{start_time_with_padding}us -t #{padded_duration}us -f adts out/seg#{index + 1}.aac"
+    else
+      "ffmpeg -hide_banner -loglevel error -nostats -y -ss #{start_time_with_padding}us -t #{padded_duration}us -i #{input_file} -c:a libfdk_aac -ar 44100 -f adts out/seg#{index + 1}.aac"
+    end
+
   directives = [
     "file 'seg#{index + 1}.aac'",
     "inpoint #{inpoint}us",
